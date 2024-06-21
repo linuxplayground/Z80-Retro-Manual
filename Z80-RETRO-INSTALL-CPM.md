@@ -36,6 +36,10 @@ After preparing the SD Card the `drive.img` image can be copied to it.
 
 ## Preparing the SD Card
 
+If you would prefer to make a raw sdcard image that you can then burn to the
+sdcard with an image burner application like "Win32DiskImager" or the one from
+the Rasperry Pi foundation, then please jump to [Making an OFFLINE SDCard Image File](#raw_sd_image)
+
 The process for this step is described in the [README-SD.md](https://github.com/Z80-Retro/2063-Z80-cpm/blob/main/README-SD.md).
 
 ### WARNING: This process can overwrite your entire host PC volume.  Proceed carefully.
@@ -181,4 +185,145 @@ build: 2023-05-24 13:04:35+12:00
 NOTICE: rw_dmcache library installed.
 
 a>
+```
+
+## [Making an OFFLINE SDCard Image File](#raw_sd_image)
+
+The following instructions only work on Linux.  They should work just fine on a
+Raspberry Pi or any other modern Linux environment.
+
+These commands have been tested and work well on Ubuntu 24.04 LTS
+
+There are 5 main steps involved.
+
+1. Create an empty image
+2. Mount the empty image as a loopback device
+3. Create a partition on the mounted loopback device
+4. Copy `drive.img` into the new partition
+5. Unmount the loopback device
+
+### Create An Empty Image
+
+Create an empty 140MB file on your disk inside the 2063-Z80-cpm folder on your
+Linux computer.
+
+Note, you can make this image larger if you like.  One reason to do that would
+be if you wanted to build an SDCARD with multiple CP/M drives on it.
+in size.
+
+```bash
+dd if=/dev/zero of=SDcard.img bs=1024 count=512000
+```
+
+### Mount The SDCard.img File to a Loopback Device
+
+This creates a virtual disk device in your computers device tree.
+
+```bash
+sudo losetup -Pf SDcard.img
+```
+
+You will need to find out which device was created.  The Losetup command will
+create the next available device number for you.
+
+```bash
+sudo losetup -a | grep SDcard.img
+/dev/loop22: [2050]:20610712 (/home/productiondave/projects/z80/2063-Z80-cpm/SDcard.img)
+```
+
+As you can see on my system. Losetup created the /dev/loop22 device for me.  As
+such these instructions will now use `/dev/loop22` from now on.  Your system
+will almost certainly be different.
+
+### Create a Partition on the Virtual Disk
+
+As per the instructions above we use parted to create a single 135 MB partition
+on our disk.
+
+```bash
+➜  2063-Z80-cpm git:(main) sudo parted /dev/loop22
+GNU Parted 3.6
+Using /dev/loop22
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) mklabel msdos                                                    
+(parted) mkpart primary 1 135
+(parted) print                                                            
+Model: Loopback device (loopback)
+Disk /dev/loop22: 524MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End    Size   Type     File system  Flags
+ 1      1049kB  135MB  134MB  primary
+
+(parted) q                                                                
+Information: You may need to update /etc/fstab.
+```
+
+### Copy drive.img on to virtual disk
+
+In this command, note that we are copying to the partition now at
+`/dev/loop22p1` that was created by parted.
+
+``` bash
+sudo dd if=filesystem/drive.img of=/dev/loop22p1 bs=512 conv=sync
+800+0 records in
+800+0 records out
+409600 bytes (410 kB, 400 KiB) copied, 0.00300272 s, 136 MB/s
+
+```
+
+### Unmount the Virtual Disk
+
+```bash
+sudo losetup -d /dev/loop22
+```
+
+At this point you are ready to use `SDcard.img` in whatever SDCard Image burning
+application you want.
+
+You might want to zip the file to share with someone.  In that case it
+compresses down really well.
+
+
+### All commands together
+
+```bash
+
+➜  2063-Z80-cpm git:(main) ✗ dd if=/dev/zero of=SDcard.img bs=1024 count=512000 
+512000+0 records in
+512000+0 records out
+524288000 bytes (524 MB, 500 MiB) copied, 1.62059 s, 324 MB/s
+
+➜  2063-Z80-cpm git:(main) sudo losetup -Pf SDcard.img 
+
+➜  2063-Z80-cpm git:(main) sudo losetup -a | grep SDcard.img
+/dev/loop22: [2050]:20220330 (/home/davelatham/projects/z80/2063-Z80-cpm/SDcard.img)
+
+➜  2063-Z80-cpm git:(main) sudo parted /dev/loop22
+GNU Parted 3.6
+Using /dev/loop22
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) mklabel msdos                                                    
+(parted) mkpart primary 1 135
+(parted) print                                                            
+Model: Loopback device (loopback)
+Disk /dev/loop22: 524MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End    Size   Type     File system  Flags
+ 1      1049kB  135MB  134MB  primary
+
+(parted) q                                                                
+Information: You may need to update /etc/fstab.
+
+sudo dd if=filesystem/drive.img of=/dev/loop22p1 bs=512 conv=sync
+800+0 records in
+800+0 records out
+409600 bytes (410 kB, 400 KiB) copied, 0.00300272 s, 136 MB/s
+
+➜  2063-Z80-cpm git:(main) sudo losetup -d /dev/loop22
 ```
