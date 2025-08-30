@@ -20,24 +20,24 @@ That said, here are some tips:
 - If you're struggling with the surface mounted SD Card socket, have a look at
   the SparkFun breakout board option. - Details in section below.
 - An alternative to soldering the SMD parts with a soldering iron is to use
-  solder paste and a hot air gun.  If you have a hot air rework station, we have
-  had reports of success with _#4 Sn42Bi58 138C_ paste which can be found on
-  Amazon.  You want the low melting point stuff which will make it easier to
+  solder paste and a hot air gun.  If you have a hot air rework station, we
+  have had reports of success with _#4 Sn42Bi58 138C_ paste which can be found
+  on Amazon.  You want the low melting point stuff which will make it easier to
   heat the board up sufficiently for the paste to begin flowing.
 - Some people even use sockets for the resistor networks.  This does raise them
   up slightly but as resistor networks are more expensive, you might want to
   consider using a socket for them too.
 - Use ceramic MLCC Capacitors for the un-polarised capacitors.  An assortment
-  can be purchased from
-  [Amazon](https://www.amazon.com/ceramic-capacitor-kit/s?k=ceramic+capacitor+kit).
-  Don't use tantalum capacitors like I did in the RS232 circuit.  While they do
-  work, they are polarised so care should be taken to install them correctly and
-  they are sensitive to voltage spikes and the risk of them popping is high.
-  **DON'T USE THEM.** They are censored in the image below.  - See [ICL3232CPZ
-  Capacitors](#icl3232cpz-capacitors) for an example of how they should be
-  installed.
-- Make sure your oscillator cans are oriented correctly.  Pin 1 is pointed to by
-  the orange arrows on the image below.
+  can be purchased from [Amazon](https://www.amazon.com/ceramic-capacitor-kit/s?k=ceramic+capacitor+kit).
+  - See [ICL3232CPZ Capacitors](#icl3232cpz-capacitors) for an example of how
+  they should be installed.
+  - See [https://github.com/Z80-Retro/2063-Z80/issues/21](https://github.com/Z80-Retro/2063-Z80/issues/21)
+    for an alternative option to the ICL3232CPZ Capacitors that places them
+    underneath the board as surface mount components which would leave the
+    top-side flat so that daughter cards can have a plastic standoff in that
+    position.
+- Make sure your oscillator cans are oriented correctly.  Pin 1 is pointed to
+  by the orange arrows on the image below.
 - You can use the cheaper socket types for everything but the oscillator cans.
   (I used machined sockets because I am a nerd.)  It's not required.
 

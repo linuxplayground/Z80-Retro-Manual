@@ -38,6 +38,8 @@ is:
         that this device can not be programmed with the Raspberry PI Programmer
         adapter board: [2065-Z80-programmer](https://github.com/Z80-Retro/2065-Z80-programmer)
 
+For a discussion on logic families see: [https://github.com/Z80-Retro/2063-Z80/issues/22](https://github.com/Z80-Retro/2063-Z80/issues/22)
+
 ## Ribbon Cables
 
 The [2063-Z80 README](https://github.com/Z80-Retro/2063-Z80) document lists some
